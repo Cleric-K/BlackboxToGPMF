@@ -1,0 +1,89 @@
+<script src="meta.js"></script>
+
+<video id="vid" width="600" src="shash1_fps_out.mp4" controls style="position: absolute" oncanplay="setCanvasSize()"></video>
+<canvas id="canvas" style="position: absolute"></canvas>
+<table>
+    <tr><th>Z (yaw)</th><td id="axis_z"></td></tr>
+    <tr><th>X</th><td id="axis_x"></td></tr>
+    <tr><th>Y</th><td id="axis_y"></td></tr>
+</table>
+<script>
+    var i = 0;
+    var gyro = [];
+    var num_chunks = 0;
+    var scale = 1;
+
+    while (i < binary.length) {
+        var fourcc = Array.prototype.slice.call(binary, i, i + 4).map(x=>String.fromCharCode(x)).join('');
+        if (fourcc == 'GYRO') {
+            //var size = new Uint16Array(binary.buffer, i + 6, 1)[0];
+            var size = (binary[i+6] << 8) + binary[i+7];
+            //var vals = new Int16Array(binary.buffer, i + 8, size*3);
+            for (var j = 0; j < size*3; j++) {
+                var i1 = i+8+j*2,
+                    i2 = i1 + 1;
+                var tmp = binary[i1];
+                binary[i1] = binary[i2];
+                binary[i2] = tmp;
+            }
+            var vals = new Int16Array(binary.buffer, i + 8, size*3);
+            vals = vals.map(x => x/scale*180/Math.PI);
+            num_chunks++;
+            
+            gyro.push.apply(gyro, vals);
+            //console.log(size);
+        }
+        else if (fourcc == 'TICK') {
+            console.log((binary[i+8] << 24) + (binary[i+9] << 16) + (binary[i+10] << 8) + binary[i+11])
+        }
+        else if (fourcc == 'SCAL') {
+            scale = (binary[i+8] << 8) + binary[i+9];
+        }
+        i++;
+    }
+    
+    //console.log(gyro);
+
+    var vid = document.getElementById('vid');
+    vid.playbackRate = .25;
+    var canvas = document.getElementById('canvas');
+    
+
+    var ctx = document.getElementById('canvas').getContext("2d");
+
+    function rend() {
+        if (!vid.paused) {
+            //var i = Math.floor(vid.currentTime/Math.floor(vid.duration/1.001)*1.001*gyro.length/3)*3;
+            var i = Math.floor(vid.currentTime/(num_chunks*1.001)*gyro.length/3)*3;
+            
+            //console.log('x', gyro[i+1]);
+            ctx.strokeStyle = "magenta";
+            ctx.setTransform(1,0,0,1,0,0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.setTransform(1,0,0,1,canvas.width/2, canvas.height/2);
+            
+            ctx.beginPath();
+            ctx.moveTo(-100, 0);
+            ctx.lineTo(100, 0);
+            ctx.moveTo(0, 100);
+            ctx.lineTo(0, -100);
+            ctx.stroke();
+
+            ctx.translate(-gyro[i], gyro[i+1]);
+            ctx.rotate(-gyro[i+2]/100);
+            ctx.beginPath();
+            ctx.rect(-20, -20, 40, 40);
+            //ctx.moveTo(0, 0);
+            //ctx.lineTo(-gyro[i]/10, -gyro[i+1]/10);
+            ctx.stroke();
+        }
+        requestAnimationFrame(rend);
+    }
+    requestAnimationFrame(rend);
+
+    function setCanvasSize() {
+        canvas.width = vid.offsetWidth;
+        canvas.height = vid.offsetHeight*.8;
+    }
+
+</script>

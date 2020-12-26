@@ -1,23 +1,32 @@
 import mp4, bbox, templates, gpmf, fps
 import sys, struct, math, io, os, shutil
-from videoprops import get_video_properties
+#from videoprops import get_video_properties
+#from moviepy.editor import *
 
 #blackbox_path = 'C:/Videos/FPV/Microlongrange/2020-10-25/BTFL_BLACKBOX_LOG_AttilaFustos_20201025_110012.BBL.csv'
 #source_video_path = 'C:/Videos/FPV/Microlongrange/2020-10-25/RC_0033_1701010101.MP4'
 #source_video_path_corrected = 'C:/Videos/FPV/Microlongrange/2020-10-25/RC_0033_1701010101_corrected_fps.mp4'
 #bb_offset = '0:0'
 
-def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1, bbtime2, thread_queue):
+def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1, bbtime2, profile, thread_queue):
 
     thread_queue.put("Processing");    
-    props = get_video_properties(source_video_path)
+    #props = get_video_properties(source_video_path)
     
-    thread_queue.put(f'''
-    Codec: {props['codec_name']}
-    Resolution: {props['width']}×{props['height']}
-    Frame rate: {props['avg_frame_rate']}
-    ''');
+    #thread_queue.put(f'''
+    #Codec: {props['codec_name']}
+    #Resolution: {props['width']}×{props['height']}
+    #Frame rate: {props['avg_frame_rate']}
+    #''');
 
+
+    #clip = VideoFileClip(source_video_path) 
+    #clip1 = clip.subclip(0, 10) 
+    #video_width = clip1.w 
+    #video_height = clip1.h
+
+    #print("Width of clip  : " + str(video_width)) 
+    #print("Height of clip  : " + str(video_height)) 
 
     #fin_name = input('Drag the video source file here and press Enter: ')
     fin_name = source_video_path
@@ -213,6 +222,8 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
 
     fm = io.BytesIO(templates.meta_trak)
     meta_trak = mp4.parse_atom(fm)
+    
+    print(meta_trak)
 
     gpmf_chunks_sizes = list(map(len, gpmf_chunks))
 
@@ -237,17 +248,20 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
     moov.children.append(meta_trak)
 
     resolutions = {
-        '1920x1080' : templates.udta1080,
-        '2704x1520' : templates.udta2k7fps30wide,
-        '3840x2160' : templates.udta4k30wide
+        'Hero5 FHD Wide 16:9 1920x1080' : templates.udta1080,
+        'Hero5 2K7 Wide 16:9 2704x1520' : templates.udta2k7fps30wide,
+        'Hero5 2K7 Wide 4:3 2704x2032'  : templates.udta2k7fps30wide4p3,
+        'Hero5 4K  Wide 16:9 3840x2160' : templates.udta4k30wide
     }
 
-    resolution = str(str(props['width']) + 'x' + str(props['height']))
-    newudta = resolutions.get(resolution, "Invalid resolution")
+    #resolution = str(str(props['width']) + 'x' + str(props['height']))
+    #resolution = str(str(video_width) + 'x' + str(video_height))
+    #resolution = '2704x1520'
+    newudta = resolutions.get(profile, "Invalid resolution")
 
     if newudta == "Invalid resolution" :
         thread_queue.put(newudta)
-        thread_queue.put(resolution)
+        thread_queue.put(profile)
         sys.exit()
 
 

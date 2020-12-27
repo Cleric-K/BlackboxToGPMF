@@ -196,9 +196,13 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
 
     fout.write(mp4.Atom(b'ftyp', templates.ftyp).flatten())
 
-    new_mdat_data_offset = fout.tell() + mp4.ATOM_HEAD_SIZE + len(templates.mdat_gopro_meta)
-    fout.write(mp4.atom_head(b'mdat', mp4.ATOM_HEAD_SIZE + mdat_data_size + len(templates.mdat_gopro_meta) + len(gpmf_merged) ))
-    fout.write(templates.mdat_gopro_meta)
+    camera = profile.split(" ", 1).pop(0) 
+        
+    mdat_gopro_meta = templates.mdat_gopro_meta.get(camera, "Invalid mdat_gopro_meta")
+
+    new_mdat_data_offset = fout.tell() + mp4.ATOM_HEAD_SIZE + len(mdat_gopro_meta)
+    fout.write(mp4.atom_head(b'mdat', mp4.ATOM_HEAD_SIZE + mdat_data_size + len(mdat_gopro_meta) + len(gpmf_merged) ))
+    fout.write(mdat_gopro_meta)
 
 
     fin.seek(mdat_data_offset)
@@ -247,17 +251,17 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
 
     moov.children.append(meta_trak)
 
-    resolutions = {
-        'Hero5 FHD Wide 16:9 1920x1080' : templates.udta1080,
-        'Hero5 2K7 Wide 16:9 2704x1520' : templates.udta2k7fps30wide,
-        'Hero5 2K7 Wide 4:3 2704x2032'  : templates.udta2k7fps30wide4p3,
-        'Hero5 4K  Wide 16:9 3840x2160' : templates.udta4k30wide
-    }
+    #resolutions = {
+    #    'Hero5 FHD Wide 16:9 1920x1080' : templates.udta1080,
+    #    'Hero5 2K7 Wide 16:9 2704x1520' : templates.udta2k7fps30wide,
+    #    'Hero5 2K7 Wide 4:3 2704x2032'  : templates.udta2k7fps30wide4p3,
+    #    'Hero5 4K  Wide 16:9 3840x2160' : templates.udta4k30wide
+    #}
 
     #resolution = str(str(props['width']) + 'x' + str(props['height']))
     #resolution = str(str(video_width) + 'x' + str(video_height))
     #resolution = '2704x1520'
-    newudta = resolutions.get(profile, "Invalid resolution")
+    newudta = templates.udta.get(profile, "Invalid resolution")
 
     if newudta == "Invalid resolution" :
         thread_queue.put(newudta)

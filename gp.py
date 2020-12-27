@@ -9,7 +9,7 @@ import tkinter as tk
 thread_queue = queue.Queue();
 top = Tk()
 top.geometry("620x500")
-top.title("GPMF Emulation 2020.12.26.1")
+top.title("GPMF Emulation 2020.12.27.1")
 
 def loadVideoCallBack():
    video_path = askopenfilename()
@@ -72,10 +72,29 @@ lbStatus = Label(top, text = "Status").place(x = 20, y = 254)
 lbProfile = Label(top, text = "Profile").place(x = 20, y = 175)
 
 profiles = [
-    'Hero5 FHD Wide 16:9 1920x1080',
-    'Hero5 2K7 Wide 16:9 2704x1520',
-    'Hero5 2K7 Wide 4:3 2704x2032',
-    'Hero5 4K  Wide 16:9 3840x2160',
+    'Hero5 1080 Wide 16:9 1920x1080',
+    'Session5 1080 Narrow 16:9 1920x1080',
+    'Session5 1080 Linear 16:9 1920x1080',
+    'Session5 1080 Medium 16:9 1920x1080',
+    'Session5 1080 Wide 16:9 1920x1080',
+    'Session5 1440 Wide 4:3 1920x1440',    
+    'Session5 2K7 Wide 16:9 2704x1520',
+    'Session5 2K7 Linear 16:9 2704x1520',
+    'Session5 2K7 Medium 16:9 2704x1520',
+    'Session5 2K7 Wide 4:3 2704x2032',
+    'Session5 4K  Wide 16:9 3840x2160',
+    'Hero6 4K Wide 16:9 3840x2160',
+    'Hero6 4K Linear 16:9 2704x1520',
+    'Hero6 4K Linear 4:3 2704x2028',
+    'Hero6 2K7 Linear 16:9 2704x1520',
+    'Hero6 2K7 Linear 4:3 2704x2028',
+    'Hero6 2K7 Wide 16:9 2704x1520',    
+    'Hero6 2K7 Wide 4:3 2704x2028',
+    'Hero6 1440 Linear 4:3 1920x1440',
+    'Hero6 1440 Wide 4:3 1920x1440',
+    'Hero6 1080 Wide 16:9 1920x1080',
+    'Hero6 1080 Linear 16:9 1920x1080',
+    'Hero6 720p Wide 16:9 1280x720'
 ]
 
 profile = StringVar(top)
@@ -113,6 +132,7 @@ txStatus = Text(frm,height=12, width=70)
 #lbStatus.place(x = 20, y = 170)
 txStatus.pack(side=tk.LEFT, fill=tk.Y)
 txStatus.insert(tk.END,'Please load video and blackbox file...\n')
+txStatus.insert(tk.END,'If you like this app, you can buy me a beer: paypal.me/attilafustos\n')
 #txStatus.insert(tk.END,'\nTerms and Conditions\n')
 #txStatus.insert(tk.END,'1.By using this tool you agree to use it on your own risk\n')
 #txStatus.insert(tk.END,'2.Nothing is guaranteed to work, this is free application\n')

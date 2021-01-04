@@ -8,7 +8,7 @@ import sys, struct, math, io, os, shutil
 #source_video_path_corrected = 'C:/Videos/FPV/Microlongrange/2020-10-25/RC_0033_1701010101_corrected_fps.mp4'
 #bb_offset = '0:0'
 
-def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1, bbtime2, profile, thread_queue):
+def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1, bbtime2, profile, camera_angle, thread_queue):
 
     thread_queue.put("Processing");    
     #props = get_video_properties(source_video_path)
@@ -146,7 +146,11 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
     num_gpmf_chunks = math.floor(length/timebase/gpmf.CHUNK_TIME)
 
 
-    bbox_time, bbox_gyro = bbox.read(fbbox, -30)
+    #bbox_time, bbox_gyro = bbox.read(fbbox, -30)
+    camera_angle = int("-" + camera_angle)
+    #print(camera_angle)
+    
+    bbox_time, bbox_gyro = bbox.read(fbbox, camera_angle)
     bbox_time = bbox.map_time(bbox_time, bb_offset1, bb_time1, bb_offset2, bb_time2)
     bbox_gyro, bbox_time = bbox.map_gyro(bbox_time, bbox_gyro, num_gpmf_chunks, gpmf.CHUNK_TIME, gpmf.GYRO_SAMPLES_PER_CHUNK)
     gpmf_chunks = gpmf.make_gpmf(bbox_gyro)

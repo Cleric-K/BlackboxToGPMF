@@ -27,7 +27,7 @@ def processVideoCallBack():
         return False
         
     thread = threading.Thread(target=p.processVideo, 
-        args=(txVideoPath.get(),txBlBoxPath.get(),txOffset1.get(),txOffset2.get(), txTime1.get(), txTime2.get(), profile.get(), thread_queue))
+        args=(txVideoPath.get(),txBlBoxPath.get(),txOffset1.get(),txOffset2.get(), txTime1.get(), txTime2.get(), profile.get(), txAngle.get(), thread_queue))
     
     thread.daemon = 1
     thread.start()
@@ -70,6 +70,10 @@ lbVideoPath = Label(top, textvariable = txVideoFile).place(x = 150, y = 20)
 lbBlBoxPath = Label(top, textvariable = txBlBoxFile).place(x = 150, y = 60)
 lbStatus = Label(top, text = "Status").place(x = 20, y = 254)
 lbProfile = Label(top, text = "Profile").place(x = 20, y = 175)
+lbAngle = Label(top, text = "Camera angle").place(x = 315, y = 175)
+txAngle = Entry(top, width=4)
+txAngle.place(x = 410, y = 175)
+txAngle.insert(0, "30")
 
 profiles = [
     'Hero5 1080 Wide 16:9 1920x1080',

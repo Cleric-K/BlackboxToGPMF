@@ -9,7 +9,7 @@ import tkinter as tk
 thread_queue = queue.Queue();
 top = Tk()
 top.geometry("620x500")
-top.title("GPMF Emulation 2021.01.04.1")
+top.title("GPMF Emulation 2021.01.19.1")
 
 def loadVideoCallBack():
    video_path = askopenfilename()

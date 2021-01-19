@@ -27,7 +27,7 @@ def processVideoCallBack():
         return False
         
     thread = threading.Thread(target=p.processVideo, 
-        args=(txVideoPath.get(),txBlBoxPath.get(),txOffset1.get(),txOffset2.get(), txTime1.get(), txTime2.get(), profile.get(), txAngle.get(), thread_queue))
+        args=(txVideoPath.get(),txBlBoxPath.get(),txOffset1.get(),txOffset2.get(), txTime1.get(), txTime2.get(), profile.get(), txAngle.get(),x_flip.get(),y_flip.get(),z_flip.get(), thread_queue))
     
     thread.daemon = 1
     thread.start()
@@ -88,8 +88,8 @@ profiles = [
     'Session5 2K7 Wide 4:3 2704x2032',
     'Session5 4K  Wide 16:9 3840x2160',
     'Hero6 4K Wide 16:9 3840x2160',
-    'Hero6 4K Linear 16:9 2704x1520',
-    'Hero6 4K Linear 4:3 2704x2028',
+    'Hero6 4K Linear 16:9 3840x2160',
+    'Hero6 4K Linear 4:3 4000x3000',
     'Hero6 2K7 Linear 16:9 2704x1520',
     'Hero6 2K7 Linear 4:3 2704x2028',
     'Hero6 2K7 Wide 16:9 2704x1520',    
@@ -126,6 +126,13 @@ lbEndTime = Label(top, text = "End time" ).place(x = 150, y = 140)
 txTime2 = Entry(top, width=7)
 txTime2.place(x = 220, y = 140)
 #txTime2.insert(0, "0:0")
+
+x_flip = IntVar()
+y_flip = IntVar()
+z_flip = IntVar()
+Checkbutton(top, text="Flip X axis (Roll)", variable=x_flip).place(x = 350, y = 100)
+Checkbutton(top, text="Flip Y axis (Pitch)", variable=y_flip).place(x = 350, y = 120)
+Checkbutton(top, text="Flip Z axis (Yaw)", variable=z_flip).place(x = 350, y = 140)
 
 btProcess = Button(top, width=15, text ="Process video", command = processVideoCallBack).place(x = 20, y = 215)
 

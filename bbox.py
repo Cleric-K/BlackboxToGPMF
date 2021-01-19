@@ -1,7 +1,8 @@
 import csv
 import numpy as np
 
-def read(f, camera_angle):
+def read(f, camera_angle, x_flip, y_flip, z_flip):
+    print(x_flip, y_flip, z_flip)
     reader = csv.reader(f)
     ca_rad = camera_angle*np.pi/180
     sn = np.sin(ca_rad)
@@ -23,8 +24,19 @@ def read(f, camera_angle):
                 time_at_arm = tm
             t.append(tm - time_at_arm)
             gyros = tuple(map(lambda x: float(x)*np.pi/180, row[gyro_index:gyro_index+3]))
+            flip_gyros = list(gyros)
+            if x_flip==1:
+                flip_gyros[0]=flip_gyros[0]*-1
+                
+            if y_flip==1:
+                flip_gyros[1]=flip_gyros[1]*-1
+
+            if z_flip==1:
+                flip_gyros[2]=flip_gyros[2]*-1
+            gyros=tuple(flip_gyros)
+            
             #gyros = tuple(map(lambda x: float(x), row[gyro_index:gyro_index+3]))
-            gyros = np.matmul(rot, gyros)
+            gyros = np.matmul(rot, gyros)          
             # degrees/sec to rad/sec
             gyro.append(gyros)
     #print(gyro[-1])

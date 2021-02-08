@@ -7,6 +7,7 @@ import struct, codecs, pprint
 
 ATOM_HEAD_SIZE = 8
 ATOM_HEAD_SIZE64 = 16
+BOUNDARY64 = 0xffffffff
 
 types = {
     b'moov': (0, True),
@@ -69,7 +70,7 @@ class Atom:
 
 def atom_head(key, data_len):
     size = data_len + ATOM_HEAD_SIZE # first try with normal 32bit size
-    if size > 0xffffffff:
+    if size > BOUNDARY64:
         # 64bit atom
         return struct.pack('>I4sQ', 1, key, data_len + ATOM_HEAD_SIZE64 )
     return struct.pack('>I4s', size, key)

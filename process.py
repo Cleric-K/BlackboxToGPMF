@@ -218,13 +218,22 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
     fout.write(gpmf_merged)
 
     mdat_offset_diff = new_mdat_data_offset - mdat_data_offset
-    for stco in moov.find(b'stco'):
+    for stco in moov.find(b'stco') + moov.find(b'co64'):
         count = struct.unpack('>I', stco.data[4:8])[0]
-        offset_format = '>{}I'.format(count)
+        fmt = 'I' if stco.key == b'stco' else 'Q' # 32 or 64bit offsets
+        offset_format = '>{}{}'.format(count, fmt)
         offsets = struct.unpack(offset_format, stco.data[8:])
         # translate offsets to new origin
         offsets = [o + mdat_offset_diff for o in offsets]
-        stco.data[8:] = struct.pack(offset_format, *offsets)
+        if max(offsets) > mp4.BOUNDARY64:
+            # 64bit offsets are needed
+            stco.key = b'co64'
+            fmt = 'Q'
+        else:
+            # 32bit offsets
+            stco.key = b'stco'
+            fmt = 'I'
+        stco.data[8:] = struct.pack('>{}{}'.format(count, fmt), *offsets)
 
 
     fm = io.BytesIO(templates.meta_trak)
@@ -241,7 +250,14 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
         chunk_offset += l
 
     # set stco - chunk offsets
-    meta_trak.find(b'stco')[0].data[4:] = struct.pack('>I{}I'.format(num_gpmf_chunks), * [num_gpmf_chunks] + gpmf_chunks_file_offsets)
+    stco = meta_trak.find(b'stco')[0]
+    if max(gpmf_chunks_file_offsets) > mp4.BOUNDARY64:
+        # offsets go beyond 64bit. Convert stco to co64
+        stco.key = b'co64'
+        fmt = 'Q'
+    else:
+        fmt = 'I'
+    stco.data[4:] = struct.pack('>I{}{}'.format(num_gpmf_chunks, fmt), * [num_gpmf_chunks] + gpmf_chunks_file_offsets)
 
     # set stsz - sample/chunk sizes
     meta_trak.find(b'stsz')[0].data[8:] = struct.pack('>I{}I'.format(num_gpmf_chunks), * [num_gpmf_chunks] + gpmf_chunks_sizes)

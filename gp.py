@@ -9,7 +9,7 @@ import tkinter as tk
 thread_queue = queue.Queue();
 top = Tk()
 top.geometry("620x500")
-top.title("GPMF Emulation 2021.01.19.1")
+top.title("GPMF Emulation 2021.02.08.1")
 
 def loadVideoCallBack():
    video_path = askopenfilename()
@@ -143,14 +143,14 @@ txStatus = Text(frm,height=12, width=70)
 #lbStatus.place(x = 20, y = 170)
 txStatus.pack(side=tk.LEFT, fill=tk.Y)
 txStatus.insert(tk.END,'Please load video and blackbox file...\n')
-txStatus.insert(tk.END,'If you like this app, you can buy me a beer: paypal.me/attilafustos\n')
+#txStatus.insert(tk.END,'If you like this app, you can buy me a beer: paypal.me/attilafustos\n')
 #txStatus.insert(tk.END,'\nTerms and Conditions\n')
 #txStatus.insert(tk.END,'1.By using this tool you agree to use it on your own risk\n')
 #txStatus.insert(tk.END,'2.Nothing is guaranteed to work, this is free application\n')
 #txStatus.insert(tk.END,'3.The authors of this app are not liable for the actions of it\'s users\n')
 #txStatus.insert(tk.END,'4.This application does not collect user informations\n')
 #txStatus.insert(tk.END,'5.Be polite if you need help, nobody get\'s payed to develop this app\n')
-#txStatus.insert(tk.END,'6.Support group: https://www.facebook.com/groups/fpvtools\n')
+txStatus.insert(tk.END,'Support group: https://www.facebook.com/groups/fpvtools\n')
 
 Scroll = tk.Scrollbar(frm)
 Scroll.pack(side=tk.RIGHT, fill=tk.Y)

@@ -115,8 +115,7 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
     moov = mp4.parse_atom(fin)
 
     fin.seek(0)
-    mdat_data_size = mp4.find_atom(fin, b'mdat') - mp4.ATOM_HEAD_SIZE
-    mdat_data_offset = fin.tell() + mp4.ATOM_HEAD_SIZE
+    mdat_data_offset, mdat_data_size = mp4.find_atom(fin, b'mdat')
 
     #print(moov)
     # video_trak = None
@@ -203,8 +202,9 @@ def processVideo(source_video_path, blackbox_path, bboffset1, bboffset2, bbtime1
         
     mdat_gopro_meta = templates.mdat_gopro_meta.get(camera, "Invalid mdat_gopro_meta")
 
-    new_mdat_data_offset = fout.tell() + mp4.ATOM_HEAD_SIZE + len(mdat_gopro_meta)
-    fout.write(mp4.atom_head(b'mdat', mp4.ATOM_HEAD_SIZE + mdat_data_size + len(mdat_gopro_meta) + len(gpmf_merged) ))
+    mdat_atom_head = mp4.atom_head(b'mdat', mdat_data_size + len(mdat_gopro_meta) + len(gpmf_merged) )
+    new_mdat_data_offset = fout.tell() + len(mdat_atom_head) + len(mdat_gopro_meta)
+    fout.write(mdat_atom_head)
     fout.write(mdat_gopro_meta)
 
 
